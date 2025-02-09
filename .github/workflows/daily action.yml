@@ -1,4 +1,4 @@
-name: Daily Commit
+name: Daily Action
 
 on:
   schedule:
@@ -23,4 +23,11 @@ jobs:
           echo "Last run: $(date)" > last-run.txt
           git add last-run.txt
           git commit -m "Automated commit: $(date)"
-          git push
+      
+      - name: Push changes
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git
+          git push origin main  # Change "main" if your branch is different
+          
