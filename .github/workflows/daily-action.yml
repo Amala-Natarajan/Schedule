@@ -1,4 +1,4 @@
-name: Daily Action
+name: Daily Commit
 
 on:
   schedule:
@@ -9,13 +9,18 @@ jobs:
   commit:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write  # Give write access to push commits
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Git user (24ds3000028@ds.study.iitm.ac.in)
         run: |
-          git config --global user.name "GitHub Actions"
+          git config --global user.name "github-actions[bot]"
           git config --global user.email "24ds3000028@ds.study.iitm.ac.in"
 
       - name: Make a dummy commit
@@ -23,10 +28,4 @@ jobs:
           echo "Last run: $(date)" > last-run.txt
           git add last-run.txt
           git commit -m "Automated commit: $(date)"
-      
-      - name: Push changes
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git
-          git push origin main  # Ensure 'main' is your correct branch
+          git push origin main
